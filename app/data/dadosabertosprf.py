@@ -38,7 +38,7 @@ def get_content_dadosabertosprf():
             zip_ref.extractall(extract_path)
 
         # Use a service account
-        cred = credentials.Certificate('app/key/techfase3-firebase-adminsdk-fbsvc-e71cc04b8f.json')
+        cred = credentials.Certificate('')
         firebase_admin.initialize_app(cred)
         db = firestore.client()
         logging.warning("Conexão aberta!")
