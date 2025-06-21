@@ -1,0 +1,21 @@
+# Ignorar ambiente virtual
+venv/
+
+# Ignorar cache do Python
+__pycache__/
+*.pyc
+
+# Ignorar diretório de dados (se necessário)
+dados/
+
+# Ignorar arquivos de chave/senha
+key/
+
+# Ignorar notebooks específicos
+tests.ipynb
+
+# Ignorar requirements.txt
+requirements.txt
+
+# Ignorar arquivos
+process/lstm_example.py
