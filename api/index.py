@@ -2,6 +2,7 @@ from flask import Flask, jsonify, json, request
 from pathlib import Path
 from os.path import join
 import yfinance as yf
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -16,14 +17,28 @@ def about():
 # Puxando dados de yfinance e serializando
 @app.route("/api/predict", methods=['GET'])
 def predict():
-    symbol = request.args.get('symbol')
-    start_date = request.args.get('dtstart')
-    end_date = request.args.get('dtend')
+    try:
+        symbol = request.args.get('symbol')
+        start_date = request.args.get('dtstart')
+        end_date = request.args.get('dtend')
 
-    # Use a função download para obter os dados
-    df = yf.download(symbol, start=start_date, end=end_date)
-    json_str = df.to_json(orient="records")
-    return jsonify(json_str)
+        df = yf.download(symbol, start=start_date, end=end_date)
+
+        # Garante que as colunas não sejam MultiIndex
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [' '.join(col).strip() for col in df.columns]
+
+        df = df.reset_index()
+        df['Ticker'] = symbol
+        df.columns = [col.replace(f" {symbol}", "") if isinstance(col, str) else col for col in df.columns]
+
+
+        # Converte para lista de dicionários (JSON serializável)
+        return jsonify(df.to_dict(orient="records"))
+
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run()
