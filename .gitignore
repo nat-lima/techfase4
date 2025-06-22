@@ -19,3 +19,4 @@ requirements.txt
 
 # Ignorar arquivos
 process/lstm_example.py
+process/test.py

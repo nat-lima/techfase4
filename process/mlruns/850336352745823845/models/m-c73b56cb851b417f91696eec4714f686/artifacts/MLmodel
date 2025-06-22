@@ -1,0 +1,23 @@
+artifact_path: file:///d:/0Viviana/1%20FIAP/4%20fase/challenge4/techfase4/techfase4/process/mlruns/850336352745823845/models/m-c73b56cb851b417f91696eec4714f686/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.9.20
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.3.0
+mlflow_version: 3.1.0
+model_id: m-c73b56cb851b417f91696eec4714f686
+model_size_bytes: 139950
+model_uuid: m-c73b56cb851b417f91696eec4714f686
+prompts: null
+run_id: 7e3219b178ef4c6e801dbd079c0ca00b
+utc_time_created: '2025-06-22 20:16:40.997840'

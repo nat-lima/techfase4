@@ -1,0 +1,10 @@
+artifact_location: file:///d:/0Viviana/1%20FIAP/4%20fase/challenge4/techfase4/techfase4/process/mlruns/850336352745823845/models/m-142061042b8c4c7589a772410f26613e/artifacts
+creation_timestamp: 1750624527245
+experiment_id: '850336352745823845'
+last_updated_timestamp: 1750624533832
+model_id: m-142061042b8c4c7589a772410f26613e
+model_type: null
+name: lstm_artificial_data_model
+source_run_id: fe2258577f734e2db825e06ae78482ef
+status: 2
+status_message: null
