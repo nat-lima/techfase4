@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Previsão Futura - LSTM</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>Previsão de 30 dias à frente</h2>
+  <button onclick="prever()">Gerar Previsão</button>
+
+  <canvas id="grafico-futuro" width="600" height="300"></canvas>
+
+  <script>
+    async function prever() {
+      try {
+        const resposta = await fetch("/prever_futuro");
+        const resultado = await resposta.json();
+
+        if (resultado.datas && resultado.previsoes) {
+          const ctx = document.getElementById("grafico-futuro").getContext("2d");
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: resultado.datas,
+              datasets: [{
+                label: "Previsão de Close (30 dias)",
+                data: resultado.previsoes,
+                borderColor: "green",
+                fill: false,
+                tension: 0.2
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { display: true }
+              }
+            }
+          });
+        } else {
+          alert("Erro: resposta inesperada da API.");
+        }
+      } catch (erro) {
+        alert("Erro ao buscar previsão: " + erro);
+      }
+    }
+  </script>
+</body>
+</html>

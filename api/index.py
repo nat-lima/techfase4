@@ -15,7 +15,7 @@ def about():
     return '<h1>Pagina da rota Sobre</h1>'
 
 # Puxando dados de yfinance e serializando
-@app.route("/api/predict", methods=['GET'])
+@app.route("/api/data", methods=['GET'])
 def predict():
     try:
         symbol = request.args.get('symbol')
