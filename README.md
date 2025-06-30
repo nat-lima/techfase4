@@ -6,7 +6,13 @@
     - deploy do modelo em uma API que permita a previsão de preços de ações
 
 
-Estrutura do projeto:
+## Link video
+
+## Arquitetura
+
+## 📁 Estrutura do Projeto
+
+```bash
 
 techfase4/
 └── api/
@@ -29,5 +35,5 @@ techfase4/
     ├── modelo_lstm.pt
     ├── scaler_y.pkl
     ├── scaler.pkl
-
+```
 
