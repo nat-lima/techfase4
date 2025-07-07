@@ -28,7 +28,6 @@ for i in range(20):
         "Month": data.month,
         "Day": data.day,
         "WeekDay": dia_da_semana,
-        "Ticker": "ACN"
     })
 
 df = pd.DataFrame(linhas)

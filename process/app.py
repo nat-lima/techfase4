@@ -1,7 +1,10 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, json, request, render_template
+from pathlib import Path
+from os.path import join
+import yfinance as yf
+import pandas as pd
 import torch
 import numpy as np
-import pandas as pd
 import joblib
 import os
 from datetime import timedelta
@@ -21,22 +24,50 @@ sequence_length = 20
 # Inicializa o app Flask
 app = Flask(__name__)
 
+@app.route('/sobre', methods=['GET'])
+def about():
+    return '<h1>Pagina da rota Sobre</h1>'
+
+# Puxando dados de yfinance e serializando
+@app.route("/api/data", methods=['GET'])
+def predict():
+    try:
+        symbol = request.args.get('symbol')
+        start_date = request.args.get('dtstart')
+        end_date = request.args.get('dtend')
+
+        df = yf.download(symbol, start=start_date, end=end_date)
+
+        # Garante que as colunas não sejam MultiIndex
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [' '.join(col).strip() for col in df.columns]
+
+        df = df.reset_index()
+        df['Ticker'] = symbol
+        df.columns = [col.replace(f" {symbol}", "") if isinstance(col, str) else col for col in df.columns]
+
+
+        # Converte para lista de dicionários (JSON serializável)
+        return jsonify(df.to_dict(orient="records"))
+
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # Função de previsão multi-step
 def multi_step_forecast(model, last_sequence, steps_ahead):
+    """
+    Gera previsão direta de até 60 dias com base na última sequência.
+    """
     model.eval()
-    preds = []
-    seq = last_sequence.clone().detach()
+    steps_ahead = min(max(1, steps_ahead), 60)  # garante entre 1 e 60
 
-    for _ in range(steps_ahead):
-        with torch.no_grad():
-            out = model(seq.unsqueeze(0))
-            preds.append(out.item())
+    with torch.no_grad():
+        out = model(last_sequence.unsqueeze(0))  # shape: (1, 60)
+        preds = out.squeeze().cpu().numpy().tolist()
 
-            new_step = seq[-1].clone()
-            new_step[0] = out  # substitui o valor de 'Close'
-            seq = torch.cat((seq[1:], new_step.unsqueeze(0)), dim=0)
-
-    return preds
+    return preds[:steps_ahead]
 
 # Rota principal que serve o HTML
 @app.route("/", methods=["GET"])
@@ -57,7 +88,10 @@ def prever_futuro():
         dados_norm = scaler.transform(df_filtrado)
         entrada = torch.tensor(dados_norm, dtype=torch.float32)
 
-        steps_ahead = 30
+        # Lê o parâmetro da URL, com valor padrão 30 e limite de 60
+        steps_ahead = int(request.args.get("dias", 30))
+        steps_ahead = min(max(1, steps_ahead), 60)
+
         preds = multi_step_forecast(model, entrada, steps_ahead)
 
         multi_preds_descaled = scaler_y.inverse_transform(np.array(preds).reshape(-1, 1)).flatten().tolist()

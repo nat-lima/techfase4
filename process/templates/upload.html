@@ -4,27 +4,49 @@
   <meta charset="UTF-8">
   <title>Previsão Futura - LSTM</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #grafico-container {
+      max-width: 100%;
+      height: 400px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Previsão de 30 dias à frente</h2>
+  <h2>Previsão futura</h2>
+
+  <label for="dias">Quantos dias à frente deseja prever (1 a 60)?</label>
+  <input type="number" id="dias" name="dias" min="1" max="60" value="30">
   <button onclick="prever()">Gerar Previsão</button>
 
-  <canvas id="grafico-futuro" width="600" height="300"></canvas>
+  <div id="grafico-container">
+    <canvas id="grafico-futuro"></canvas>
+  </div>
 
   <script>
+    let chartInstance = null;
+
     async function prever() {
+      const dias = document.getElementById("dias").value;
+
       try {
-        const resposta = await fetch("/prever_futuro");
+        const resposta = await fetch(`/prever_futuro?dias=${dias}`);
         const resultado = await resposta.json();
 
         if (resultado.datas && resultado.previsoes) {
           const ctx = document.getElementById("grafico-futuro").getContext("2d");
-          new Chart(ctx, {
+
+          if (chartInstance) chartInstance.destroy(); // limpa gráfico anterior
+
+          chartInstance = new Chart(ctx, {
             type: "line",
             data: {
               labels: resultado.datas,
               datasets: [{
-                label: "Previsão de Close (30 dias)",
+                label: `Previsão de Close (${dias} dias)`,
                 data: resultado.previsoes,
                 borderColor: "green",
                 fill: false,
@@ -33,11 +55,23 @@
             },
             options: {
               responsive: true,
+              maintainAspectRatio: false,
               plugins: {
                 legend: { display: true }
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    maxRotation: 45,
+                    autoSkip: true,
+                    maxTicksLimit: 15
+                  }
+                }
               }
             }
           });
+        } else if (resultado.erro) {
+          alert("Erro da API: " + resultado.erro);
         } else {
           alert("Erro: resposta inesperada da API.");
         }
