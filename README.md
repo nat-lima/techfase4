@@ -15,25 +15,24 @@
 ```bash
 
 techfase4/
-└── api/
-    ├──index.py
 └── data/
-    ├──dados_prever.csv
     ├──dados.pkl
-    ├──gerar_csv.py
     ├──get_data.ipynb
 └── process/
     ├── mlruns/
     └── templates/
-        └── upload.html
+    │   └── upload.html
     ├── utils/
     │   ├── __init__.py
     │   └── carregar_modelo.py
     │   ├── lstm_ativacao.py
     ├── app.py
-    ├── lstm_v2.ipynb
+    ├── lstm_normalizada.ipynb
     ├── modelo_lstm.pt
     ├── scaler_y.pkl
     ├── scaler.pkl
+    ├── .gitignore
+    ├── README.md
+    ├── requirements.txt
 ```
 

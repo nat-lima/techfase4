@@ -15,7 +15,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(BASE_DIR, "modelo_lstm.pt")
 scaler_path = os.path.join(BASE_DIR, "scaler.pkl")
 scaler_y_path = os.path.join(BASE_DIR, "scaler_y.pkl")
-dados_path = os.path.join(BASE_DIR, "..", "data", "dados_prever.csv")
 
 # Carrega modelo e scalers
 model, scaler, scaler_y = carregar_modelo_completo(model_path, scaler_path, scaler_y_path)
@@ -78,22 +77,49 @@ def home():
 @app.route("/prever_futuro", methods=["GET"])
 def prever_futuro():
     try:
-        df = pd.read_csv(dados_path)
-        colunas_usadas = scaler.feature_names_in_
-        df_filtrado = df[colunas_usadas].tail(sequence_length)
+        symbol = request.args.get("symbol", "AAPL")
+        steps_ahead = int(request.args.get("dias", 30))
+        steps_ahead = min(max(1, steps_ahead), 60)
 
+        # Baixa os dados mais recentes
+        df = yf.download(symbol, period="90d")
+        if df.empty:
+            return jsonify({"erro": "Não foi possível obter dados do ativo."}), 400
+
+        # Trata MultiIndex, reseta índice e limpa nomes de colunas
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [' '.join(col).strip() for col in df.columns]
+
+        df = df.reset_index()
+        df['Ticker'] = symbol
+        df.columns = [col.replace(f" {symbol}", "") if isinstance(col, str) else col for col in df.columns]
+
+        # Cria colunas temporais esperadas
+        df["Date"] = pd.to_datetime(df["Date"])
+        df["Timestamp"] = df["Date"].astype("int64") // 10**9  # segundos desde 1970
+        df["Year"] = df["Date"].dt.year
+        df["Month"] = df["Date"].dt.month
+        df["Day"] = df["Date"].dt.day
+        df["WeekDay"] = df["Date"].dt.weekday
+        df = df.sort_values("Date")
+        df = df.drop(columns=["Date", 'Ticker'])
+
+        # Verifica se todas as colunas esperadas estão presentes
+        colunas_usadas = scaler.feature_names_in_
+        faltando = [col for col in colunas_usadas if col not in df.columns]
+        if faltando:
+            return jsonify({"erro": f"Colunas faltando: {faltando}"}), 400
+
+        # Prepara os dados para previsão
+        df_filtrado = df[colunas_usadas].tail(sequence_length)
         if len(df_filtrado) < sequence_length:
-            return jsonify({"erro": f"Arquivo precisa de pelo menos {sequence_length} linhas."}), 400
+            return jsonify({"erro": f"É necessário pelo menos {sequence_length} dias de dados."}), 400
 
         dados_norm = scaler.transform(df_filtrado)
         entrada = torch.tensor(dados_norm, dtype=torch.float32)
 
-        # Lê o parâmetro da URL, com valor padrão 30 e limite de 60
-        steps_ahead = int(request.args.get("dias", 30))
-        steps_ahead = min(max(1, steps_ahead), 60)
-
+        # Faz a previsão
         preds = multi_step_forecast(model, entrada, steps_ahead)
-
         multi_preds_descaled = scaler_y.inverse_transform(np.array(preds).reshape(-1, 1)).flatten().tolist()
 
         ultima_data = pd.to_datetime(df["Timestamp"].max(), unit="s")
