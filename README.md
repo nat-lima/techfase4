@@ -26,7 +26,10 @@ techfase4/
     │   ├── __init__.py
     │   └── carregar_modelo.py
     │   ├── lstm_ativacao.py
+    ├── .dockerignore    
     ├── app.py
+    ├── Dockerfile   
+    ├── lstm sem scaler.ipynb
     ├── lstm_normalizada.ipynb
     ├── modelo_lstm.pt
     ├── scaler_y.pkl
