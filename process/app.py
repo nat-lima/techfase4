@@ -13,12 +13,10 @@ from utils.carregar_modelo import carregar_modelo_completo
 # Caminhos
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(BASE_DIR, "modelo_lstm.pt")
-scaler_path = os.path.join(BASE_DIR, "scaler.pkl")
-scaler_y_path = os.path.join(BASE_DIR, "scaler_y.pkl")
 
 # Carrega modelo e scalers
-model, scaler, scaler_y = carregar_modelo_completo(model_path, scaler_path, scaler_y_path)
-sequence_length = 20
+model, metadados = carregar_modelo_completo(model_path)
+sequence_length = metadados["sequence_length"]
 
 # Inicializa o app Flask
 app = Flask(__name__)
@@ -77,12 +75,12 @@ def home():
 @app.route("/prever_futuro", methods=["GET"])
 def prever_futuro():
     try:
-        symbol = request.args.get("symbol", "AAPL")
+        symbol = request.args.get("symbol", "ACN")
         steps_ahead = int(request.args.get("dias", 30))
         steps_ahead = min(max(1, steps_ahead), 60)
 
         # Baixa os dados mais recentes
-        df = yf.download(symbol, period="90d")
+        df = yf.download(symbol, period="180d")
         if df.empty:
             return jsonify({"erro": "Não foi possível obter dados do ativo."}), 400
 
@@ -96,39 +94,30 @@ def prever_futuro():
 
         # Cria colunas temporais esperadas
         df["Date"] = pd.to_datetime(df["Date"])
-        df["Timestamp"] = df["Date"].astype("int64") // 10**9  # segundos desde 1970
-        df["Year"] = df["Date"].dt.year
-        df["Month"] = df["Date"].dt.month
-        df["Day"] = df["Date"].dt.day
-        df["WeekDay"] = df["Date"].dt.weekday
         df = df.sort_values("Date")
-        df = df.drop(columns=["Date", 'Ticker'])
+        ultima_data = pd.to_datetime(df["Date"].iloc[-1])
 
-        # Verifica se todas as colunas esperadas estão presentes
-        colunas_usadas = scaler.feature_names_in_
-        faltando = [col for col in colunas_usadas if col not in df.columns]
-        if faltando:
-            return jsonify({"erro": f"Colunas faltando: {faltando}"}), 400
+        df = df.drop(columns=["Date", 'Volume', 'Ticker'])
 
-        # Prepara os dados para previsão
-        df_filtrado = df[colunas_usadas].tail(sequence_length)
-        if len(df_filtrado) < sequence_length:
-            return jsonify({"erro": f"É necessário pelo menos {sequence_length} dias de dados."}), 400
+        # Seleciona as últimas linhas com base na sequência esperada
+        df_sequencia = df.tail(sequence_length)
 
-        dados_norm = scaler.transform(df_filtrado)
-        entrada = torch.tensor(dados_norm, dtype=torch.float32)
+        # Verifica se tem dados suficientes
+        if len(df_sequencia) < sequence_length:
+            return jsonify({"erro": f"Dados insuficientes: apenas {len(df_sequencia)} dias disponíveis"}), 400
+
+        # Converte para tensor com forma (1, sequence_length, input_size)
+        entrada = torch.tensor(df_sequencia.values, dtype=torch.float32)
 
         # Faz a previsão
         preds = multi_step_forecast(model, entrada, steps_ahead)
-        multi_preds_descaled = scaler_y.inverse_transform(np.array(preds).reshape(-1, 1)).flatten().tolist()
 
-        ultima_data = pd.to_datetime(df["Timestamp"].max(), unit="s")
         future_dates = pd.date_range(start=ultima_data + timedelta(days=1), periods=steps_ahead, freq="D")
         future_dates = future_dates.strftime("%Y-%m-%d").tolist()
 
         return jsonify({
             "datas": future_dates,
-            "previsoes": [round(v, 2) for v in multi_preds_descaled]
+            "previsoes": [round(v, 2) for v in preds]
         })
 
     except Exception as e:

@@ -1,0 +1,14 @@
+artifact_uri: file:///d:/0Viviana/1%20FIAP/4%20fase/challenge4/techfase4/techfase4/process/mlruns/850336352745823845/d1136d1dcf9d4a22bdf7aa5a22ba0bc9/artifacts
+end_time: 1753223235533
+entry_point_name: ''
+experiment_id: '850336352745823845'
+lifecycle_stage: active
+run_id: d1136d1dcf9d4a22bdf7aa5a22ba0bc9
+run_name: 'Ativação: ReLU'
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753223234965
+status: 4
+tags: []
+user_id: vivia

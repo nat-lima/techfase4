@@ -4,7 +4,7 @@ import joblib
 from utils.lstm_ativacao import LSTMAtivacao
 
 # Função para carregar modelo e scalers
-def carregar_modelo_completo(caminho_modelo, caminho_scaler, caminho_scaler_y):
+def carregar_modelo_completo(caminho_modelo):
     checkpoint = torch.load(caminho_modelo, map_location="cpu")
 
     ativacoes = {
@@ -23,8 +23,5 @@ def carregar_modelo_completo(caminho_modelo, caminho_scaler, caminho_scaler_y):
     model.load_state_dict(checkpoint["model_state"])
     model.eval()
 
-    scaler = joblib.load(caminho_scaler)
-    scaler_y = joblib.load(caminho_scaler_y)
-
-    print("Modelo e scalers carregados com sucesso.")
-    return model, scaler, scaler_y
+    print("Modelo carregado com sucesso.")
+    return model, checkpoint

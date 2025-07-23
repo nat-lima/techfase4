@@ -1,0 +1,14 @@
+artifact_uri: file:///d:/0Viviana/1%20FIAP/4%20fase/challenge4/techfase4/techfase4/process/mlruns/850336352745823845/7e4eb513a64a40f297377c438e56c08b/artifacts
+end_time: 1753227814563
+entry_point_name: ''
+experiment_id: '850336352745823845'
+lifecycle_stage: active
+run_id: 7e4eb513a64a40f297377c438e56c08b
+run_name: 'Ativação: Tanh'
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753226934855
+status: 3
+tags: []
+user_id: vivia

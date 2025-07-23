@@ -14,7 +14,7 @@
 
 ```bash
 
-techfase4/
+TECHFASE4/
 └── data/
     ├──dados.pkl
     ├──get_data.ipynb
@@ -30,12 +30,35 @@ techfase4/
     ├── app.py
     ├── Dockerfile   
     ├── lstm sem scaler.ipynb
-    ├── lstm_normalizada.ipynb
     ├── modelo_lstm.pt
-    ├── scaler_y.pkl
-    ├── scaler.pkl
     ├── .gitignore
     ├── README.md
     ├── requirements.txt
 ```
 
+## Criar imagem no Docker
+
+Abrir DOCKER DESKTOP
+
+Construa a imagem: docker build -t flask-previsao .
+
+pasta requirements.txt deve estar dentro da pasta onde esta o dockerfile.
+
+Depois que o build terminar com sucesso: docker run -p 5000:5000 flask-previsao
+
+API Flask estará disponível em:
+http://localhost:5000
+
+
+🧪 Verificar se a imagem foi criada
+Para listar as imagens locais: docker images
+
+
+🔁 Para reconstruir a imagem
+Rodar docker build de novo se:
+•	Alterou o Dockerfile
+•	Atualizou o requirements.txt
+•	Mudou arquivos do seu app (como app.py, modelos .pt, templates, etc.)
+•	Adicionou novas dependências ou arquivos ao projeto
+
+Nesses casos, reconstruir com: docker build -t flask-previsao . 
