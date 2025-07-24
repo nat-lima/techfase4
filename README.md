@@ -20,20 +20,21 @@ TECHFASE4/
     ├──get_data.ipynb
 └── process/
     ├── mlruns/
-    └── templates/
+    ├── templates/
     │   └── upload.html
     ├── utils/
-    │   ├── __init__.py
+    │   └── __init__.py
     │   └── carregar_modelo.py
-    │   ├── lstm_ativacao.py
+    │   └── lstm_ativacao.py
     ├── .dockerignore    
     ├── app.py
     ├── Dockerfile   
     ├── lstm sem scaler.ipynb
     ├── modelo_lstm.pt
-    ├── .gitignore
-    ├── README.md
     ├── requirements.txt
+|── .gitignore
+|── README.md
+
 ```
 
 ## Criar imagem no Docker
