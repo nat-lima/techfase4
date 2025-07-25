@@ -8,6 +8,9 @@
 
 ## Link video
 
+https://drive.google.com/drive/folders/1Wy_kNKhRWtRm2lDKU4m8vf-SMGHgF2od?usp=sharing
+
+
 ## Arquitetura
 
 ## 📁 Estrutura do Projeto
