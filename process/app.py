@@ -23,7 +23,7 @@ app = Flask(__name__)
 
 @app.route('/sobre', methods=['GET'])
 def about():
-    return '<h1>Pagina da rota Sobre</h1>'
+    return '<h1>Pagina da rota sobre predição do valor de fechamento da bolsa de valores de uma empresa. </h1>'
 
 # Puxando dados de yfinance e serializando
 @app.route("/api/data", methods=['GET'])
