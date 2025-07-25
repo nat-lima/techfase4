@@ -32,8 +32,8 @@ TECHFASE4/
     ├── lstm sem scaler.ipynb
     ├── modelo_lstm.pt
     ├── requirements.txt
-|── .gitignore
-|── README.md
+└── .gitignore
+└── README.md
 
 ```
 
