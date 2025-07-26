@@ -41,16 +41,16 @@ TECHFASE4/
 ```
 
 - **`data/`**: Diretório principal do aplicativo.
-  - **`dados.pkl`**: Data Frame PKL para treinamento do Modelo.
-  - **`get_data.ipynb`**: 
+  - **`dados.pkl`**: Contém o data frame pickle para treinamento do Modelo.
+  - **`get_data.ipynb`**: instanciada apartir de rota no app.py, ao reconhecer os paramentos ação, data inicio e data fim o script salva o resultado da consulta  como data frame pickle. 
 - **`process/`**: 
   - **`mlruns/`**: Experimentos executados.
   - **`templates/`**: 
-      - **`upload.html`**: Html template para recebimento dos parametros  e apresenta o gráfico das previsões (invocada apartir do flask)
+      - **`upload.html`**: Instanciado apartir de rota no app.py, o html template possui entrada para recebimento de parametro, bem como, estrutura para  e aprsentar o gráfico de previsões (invocada apartir do flask)
 - **`util/`**:
    - **`carregar_modelo.py`**: Carrega o Modelo previamente treinado
    - **`lstm_ativacao.py`**: Desenvolvimento da LSTM para prever o preço de fechamento.
-- **`app.py`**: Estrutura para validação do parametro recebido pelo usuário para apresentação no upload.html.
+- **`app.py`**: Contém rota para busca dos dados financeiro utilizando o yfinannce, e contém rota para apresentação das previsões ao usuário final.
 - **`lstm sem scaler.ipynb`**: Opcoes de ativações para análise de qual entre elas performa melhor.
 - **`modelo_lstm.pt`**: Modelo treinado 
 - **`requirements.txt`**: Lista de dependências do projeto.
