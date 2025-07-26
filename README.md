@@ -40,6 +40,23 @@ TECHFASE4/
 
 ```
 
+- **`data/`**: Diretório principal do aplicativo.
+  - **`dados.pkl`**: Data Frame PKL para treinamento do Modelo.
+  - **`get_data.ipynb`**: 
+- **`process/`**: 
+  - **`mlruns/`**: Experimentos executados.
+  - **`templates/`**: 
+      - **`upload.html`**: Html template para recebimento dos parametros  e apresenta o gráfico das previsões (invocada apartir do flask)
+- **`util/`**:
+   - **`carregar_modelo.py`**: Carrega o Modelo previamente treinado
+   - **`lstm_ativacao.py`**: Desenvolvimento da LSTM para prever o preço de fechamento.
+- **`app.py`**: Estrutura para validação do parametro recebido pelo usuário para apresentação no upload.html.
+- **`lstm sem scaler.ipynb`**: Opcoes de ativações para análise de qual entre elas performa melhor.
+- **`modelo_lstm.pt`**: Modelo treinado 
+- **`requirements.txt`**: Lista de dependências do projeto.
+- **`README.md`**: Documentação do projeto.
+
+
 ## Criar imagem no Docker
 
 Abrir DOCKER DESKTOP
